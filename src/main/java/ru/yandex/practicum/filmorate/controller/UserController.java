@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.UserInvalidUpdateId;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/users")
-    public User createUser(@RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         validateUser(user);
         user.setId(nextIndex(userIndex));
         users.put(user.getId(), user);
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/users")
-    public User updateUser(@RequestBody User updateUser) {
+    public User updateUser(@Valid @RequestBody User updateUser) {
         validateUser(updateUser);
 
         if (users.containsKey(updateUser.getId())) {

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmInvalidUpdateId;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -24,7 +25,7 @@ public class FilmController {
     }
 
     @PostMapping(value = "/films")
-    public Film create(@RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         validateFilm(film);
         film.setId(nextIndex(filmIndex));
         films.put(film.getId(), film);
@@ -33,7 +34,7 @@ public class FilmController {
     }
 
     @PutMapping(value = "/films")
-    public Film updateFilm(@RequestBody Film updateFilm) {
+    public Film updateFilm(@Valid @RequestBody Film updateFilm) {
         validateFilm(updateFilm);
 
         if (films.containsKey(updateFilm.getId())) {
