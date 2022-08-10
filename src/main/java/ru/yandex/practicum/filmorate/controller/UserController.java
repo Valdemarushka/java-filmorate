@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.UserInvalidUpdateId;
 import ru.yandex.practicum.filmorate.model.User;
@@ -13,11 +12,10 @@ import static ru.yandex.practicum.filmorate.tools.ModelTools.nextIndex;
 import static ru.yandex.practicum.filmorate.tools.ModelTools.validateUser;
 
 @RestController
+@Slf4j
 public class UserController {
-
     private final HashMap<Integer, User> users = new HashMap<>();
     private Integer userIndex = 0;
-    private final static Logger log = LoggerFactory.getLogger(ru.yandex.practicum.filmorate.controller.FilmController.class);
 
     @GetMapping("/users")
     public Collection<User> findAllUser() {

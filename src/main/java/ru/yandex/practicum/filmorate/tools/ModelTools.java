@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 
 public class ModelTools {
+    static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 11, 28);
 
     //общие методы
     public static int nextIndex(int userIndex) {
@@ -17,8 +18,6 @@ public class ModelTools {
 
 
     //методы для фильмов
-
-
     private final static Logger log = LoggerFactory.getLogger(ModelTools.class);
 
     public static void validateFilm(Film film) {
@@ -53,7 +52,6 @@ public class ModelTools {
     }
 
     public static void releaseDateValidator(Film film) {
-        final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 11, 28);
         if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             log.error("Неверная дата релиза");
             throw new FilmInvalidDataRelease("Неверная дата релиза");
@@ -68,7 +66,6 @@ public class ModelTools {
     }
 
     //методы для юзеров
-
     public static void validateUser(User user) {
         userNotNull(user);
         userEmailValidator(user);

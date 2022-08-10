@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmInvalidUpdateId;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -13,11 +12,10 @@ import static ru.yandex.practicum.filmorate.tools.ModelTools.nextIndex;
 import static ru.yandex.practicum.filmorate.tools.ModelTools.validateFilm;
 
 @RestController
+@Slf4j
 public class FilmController {
-
     private final HashMap<Integer, Film> films = new HashMap<>();
     private Integer filmIndex = 0;
-    private final static Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @GetMapping("/films")
     public Collection<Film> findAllFilms() {
@@ -27,7 +25,7 @@ public class FilmController {
 
     @PostMapping(value = "/films")
     public Film create(@RequestBody Film film) {
-        validateFilm(film);
+
         film.setId(nextIndex(filmIndex));
         films.put(film.getId(), film);
         log.debug(film.toString());
