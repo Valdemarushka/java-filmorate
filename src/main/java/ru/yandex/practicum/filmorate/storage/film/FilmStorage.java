@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface FilmStorage {
 
-
+    // Хранение, обновление и поиск объектов.
     //Создать фильм
     public Film createFilm(Film film);
 
@@ -16,6 +16,14 @@ public interface FilmStorage {
     public Film updateFilm(Film updateFilm);
 
     //Получить все фильмы
-    public List<Film> findAllFilms();
+    public List<Film> getAllFilms();
+
+    public Film getFilmById(Integer id);
+
+    //Удалить все фильмы
+    public void deleteAllFilms();
+
+    //Удалить фильм
+    public void deleteFilm(Integer id);
 
 }

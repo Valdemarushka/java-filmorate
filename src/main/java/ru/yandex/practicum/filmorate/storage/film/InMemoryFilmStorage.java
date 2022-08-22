@@ -16,9 +16,10 @@ import static ru.yandex.practicum.filmorate.tools.ModelTools.validateFilm;
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
 
+    //реализация хранения, обновления и поиска объектов.
+
     private final HashMap<Integer, Film> films = new HashMap<>();
     private Integer filmIndex = 0;
-
 
     @Override
     public Film createFilm(Film film) {
@@ -28,7 +29,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.debug("фильм добавлен");
         return films.get(film.getId());
     }
-
 
     @Override
     public Film updateFilm(Film updateFilm) {
@@ -44,9 +44,27 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> findAllFilms() {
+    public List<Film> getAllFilms() {
         log.debug("Текущее количество фильмов: {}", films.size());
         return new ArrayList<Film>(films.values());
+    }
+
+    @Override
+    public Film getFilmById(Integer id) {
+        log.debug("Получаем фильм");
+        return films.get(id);
+    }
+
+    @Override
+    public void deleteAllFilms() {
+        films.clear();
+        log.debug("Фильмы удалены");
+    }
+
+    @Override
+    public void deleteFilm(Integer id) {
+        films.remove(id);
+        log.debug("Фильм c id{} удален", id);
     }
 
 

@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 @RestController
 @Slf4j
@@ -24,9 +25,30 @@ public class FilmController {
 
     @GetMapping("/films")
     public Collection<Film> findAllFilms() {
-        return inMemoryFilmStorage.findAllFilms();
+        return inMemoryFilmStorage.getAllFilms();
     }
 
+    @GetMapping("/films/{id}")
+    public Film getFilmById(@PathVariable("id") Integer id) {
+        return inMemoryFilmStorage.getFilmById(id);
+    }
+
+    @PutMapping("/films/{id}/like/{userId}")
+    public void addLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
+        filmService.addLike(id, userId);
+    }
+
+    @DeleteMapping("/films/{id}/like/{userId}")
+    public void deleteLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
+        filmService.deleteLike(id, userId);
+    }
+
+    @GetMapping("films/popular")
+    public Set<Film> getMostPopularFilm(
+            @RequestParam(defaultValue = "10", required = false) Integer count
+    ) {
+        return filmService.getMostPopularFilm(count);
+    }
 
     @PostMapping(value = "/films")
     public Film createFilm(@RequestBody Film film) {
