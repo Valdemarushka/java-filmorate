@@ -2,15 +2,12 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.FilmInvalidUpdateId;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import static ru.yandex.practicum.filmorate.tools.ModelTools.nextIndex;
-import static ru.yandex.practicum.filmorate.tools.ModelTools.validateFilm;
+import static ru.yandex.practicum.filmorate.tools.ModelTools.*;
 
 @Component
 @Slf4j
@@ -24,6 +21,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film createFilm(Film film) {
         validateFilm(film);
+        filmsNotNull(films);
         film.setId(nextIndex(filmIndex));
         films.put(film.getId(), film);
         log.debug("фильм добавлен");
@@ -33,18 +31,16 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film updateFilm) {
         validateFilm(updateFilm);
-        if (films.containsKey(updateFilm.getId())) {
-            films.put(updateFilm.getId(), updateFilm);
-            log.debug("Фильм обновлен");
-            return films.get(updateFilm.getId());
-
-        } else {
-            throw new FilmInvalidUpdateId("Такого Id для обновления не существует");
-        }
+        filmsContainsId(films, updateFilm.getId());
+        films.put(updateFilm.getId(), updateFilm);
+        log.debug("Фильм обновлен");
+        return films.get(updateFilm.getId());
     }
 
     @Override
-    public List<Film> getAllFilms() {
+    public ArrayList<Film> getAllFilms() {
+        log.debug("Получаем все фильмы");
+        filmsNotNull(films);
         log.debug("Текущее количество фильмов: {}", films.size());
         return new ArrayList<Film>(films.values());
     }
@@ -52,20 +48,23 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film getFilmById(Integer id) {
         log.debug("Получаем фильм");
+        filmsContainsId(films, id);
         return films.get(id);
     }
 
     @Override
     public void deleteAllFilms() {
+        log.debug("Удаляем все фильмы");
+        filmsNotNull(films);
         films.clear();
         log.debug("Фильмы удалены");
     }
 
     @Override
     public void deleteFilm(Integer id) {
+        log.debug("Удаляем фильм");
+        filmsContainsId(films, id);
         films.remove(id);
         log.debug("Фильм c id{} удален", id);
     }
-
-
 }

@@ -1,7 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.exception.ObjectIsNull;
+import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
@@ -25,7 +26,7 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.of(1999, 12, 11))
                 .duration(100)
                 .build();
-        assertThrows(FilmInvalidName.class, () -> validateFilm(film));
+        assertThrows(ValidateException.class, () -> validateFilm(film));
     }
 
     @Test
@@ -41,7 +42,7 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.of(1999, 12, 11))
                 .duration(100)
                 .build();
-        assertThrows(FilmLengthDescriptionTooLong.class, () -> validateFilm(film));
+        assertThrows(ValidateException.class, () -> validateFilm(film));
     }
 
     @Test
@@ -54,7 +55,7 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.of(1700, 12, 11))
                 .duration(100)
                 .build();
-        assertThrows(FilmInvalidDataRelease.class, () -> validateFilm(film));
+        assertThrows(ValidateException.class, () -> validateFilm(film));
     }
 
     @Test
@@ -67,7 +68,7 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.of(1999, 12, 11))
                 .duration(-100)
                 .build();
-        assertThrows(FilmDurationIsNegative.class, () -> validateFilm(film));
+        assertThrows(ValidateException.class, () -> validateFilm(film));
     }
 
 
