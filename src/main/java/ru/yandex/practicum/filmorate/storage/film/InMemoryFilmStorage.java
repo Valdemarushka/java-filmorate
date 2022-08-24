@@ -14,15 +14,18 @@ import static ru.yandex.practicum.filmorate.tools.ModelTools.*;
 public class InMemoryFilmStorage implements FilmStorage {
 
     //реализация хранения, обновления и поиска объектов.
-
     private final HashMap<Integer, Film> films = new HashMap<>();
     private Integer filmIndex = 0;
+
+    private int nextIndex() {
+        return ++filmIndex;
+    }
 
     @Override
     public Film createFilm(Film film) {
         validateFilm(film);
         filmsNotNull(films);
-        film.setId(nextIndex(filmIndex));
+        film.setId(nextIndex());
         films.put(film.getId(), film);
         log.debug("фильм добавлен");
         return films.get(film.getId());
@@ -31,7 +34,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film updateFilm) {
         validateFilm(updateFilm);
-        filmsContainsId(films, updateFilm.getId());
+        filmsContainsIdAndNotNull(films, updateFilm.getId());
         films.put(updateFilm.getId(), updateFilm);
         log.debug("Фильм обновлен");
         return films.get(updateFilm.getId());
@@ -48,7 +51,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film getFilmById(Integer id) {
         log.debug("Получаем фильм");
-        filmsContainsId(films, id);
+        filmsContainsIdAndNotNull(films, id);
         return films.get(id);
     }
 
@@ -61,9 +64,15 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public HashMap<Integer, Film> getFilms() {
+        filmsNotNull(films);
+        return films;
+    }
+
+    @Override
     public void deleteFilm(Integer id) {
         log.debug("Удаляем фильм");
-        filmsContainsId(films, id);
+        filmsContainsIdAndNotNull(films, id);
         films.remove(id);
         log.debug("Фильм c id{} удален", id);
     }

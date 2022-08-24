@@ -5,71 +5,86 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
+
+import static ru.yandex.practicum.filmorate.tools.ModelTools.userNotNull;
+import static ru.yandex.practicum.filmorate.tools.ModelTools.usersContainsIdAndNotNull;
 
 @Component
 public class UserService {
     InMemoryUserStorage inMemoryUserStorage;
 
     @Autowired
-
     public UserService(InMemoryUserStorage inMemoryUserStorage) {
-
         this.inMemoryUserStorage = inMemoryUserStorage;
     }
 
     public void addFriend(Integer idUser, Integer idFriend) {
+        usersContainsIdAndNotNull(inMemoryUserStorage.getUsers(), idUser);
+        usersContainsIdAndNotNull(inMemoryUserStorage.getUsers(), idFriend);
+        addFriendOneDirection(idUser, idFriend);
+        addFriendOneDirection(idFriend, idUser);
+    }
 
-
-        User user = inMemoryUserStorage.getUserById(idUser);
+    public void addFriendOneDirection(Integer idUser1, Integer idUser2) {
+        User user = inMemoryUserStorage.getUserById(idUser1);
+        userNotNull(user);
         Set<Integer> friendsOfUser = user.getFriends();
-        friendsOfUser.add(idFriend);
+        friendsOfUser.add(idUser2);
         user.setFriends(friendsOfUser);
         inMemoryUserStorage.updateUser(user);
-
-        User userFriend = inMemoryUserStorage.getUserById(idFriend);
-        Set<Integer> friendsOfFriendUser = userFriend.getFriends();
-        friendsOfFriendUser.add(idUser);
-        userFriend.setFriends(friendsOfFriendUser);
-        inMemoryUserStorage.updateUser(userFriend);
-
-
     }
 
     public void deleteFriend(Integer idUser, Integer idFriend) {
-        User user = inMemoryUserStorage.getUserById(idUser);
-        Set<Integer> friendsOfUser = user.getFriends();
-        friendsOfUser.remove(idFriend);
-        user.setFriends(friendsOfUser);
-        inMemoryUserStorage.updateUser(user);
-
-        User userFriend = inMemoryUserStorage.getUserById(idFriend);
-        Set<Integer> friendsOfFriendUser = userFriend.getFriends();
-        friendsOfFriendUser.remove(idUser);
-        userFriend.setFriends(friendsOfFriendUser);
-        inMemoryUserStorage.updateUser(userFriend);
+        usersContainsIdAndNotNull(inMemoryUserStorage.getUsers(), idUser);
+        usersContainsIdAndNotNull(inMemoryUserStorage.getUsers(), idFriend);
+        deleteFriendOneDirection(idUser, idFriend);
+        deleteFriendOneDirection(idFriend, idUser);
     }
 
-    public List<Integer> getMutualFriend(Integer idUser1, Integer idUser2) {
+    public void deleteFriendOneDirection(Integer idUser1, Integer idUser2) {
         User user = inMemoryUserStorage.getUserById(idUser1);
-        User user2 = inMemoryUserStorage.getUserById(idUser2);
-        List<Integer> mutualFriend = new ArrayList<>();
+        userNotNull(user);
+        Set<Integer> friendsOfUser = user.getFriends();
+        if (friendsOfUser.contains(idUser2)) {
+            friendsOfUser.remove(idUser2);
+            user.setFriends(friendsOfUser);
+            inMemoryUserStorage.updateUser(user);
+        }
+    }
 
+    public Set<User> getСommonFriends(Integer idUser1, Integer idUser2) {
+        usersContainsIdAndNotNull(inMemoryUserStorage.getUsers(), idUser1);
+        User user = inMemoryUserStorage.getUserById(idUser1);
+        userNotNull(user);
+        usersContainsIdAndNotNull(inMemoryUserStorage.getUsers(), idUser2);
+        User user2 = inMemoryUserStorage.getUserById(idUser2);
+        userNotNull(user2);
+        Set<User> сommonFriends = new HashSet<>();
+        if (user.getFriends() == null || user2.getFriends() == null) {
+            return сommonFriends;
+        }
         for (Integer IdFriendsUser1 : user.getFriends()) {
             if (user2.getFriends().contains(IdFriendsUser1)) {
-                mutualFriend.add(IdFriendsUser1);
+                сommonFriends.add(inMemoryUserStorage.getUserById(IdFriendsUser1));
             }
         }
-        return mutualFriend;
+        return сommonFriends;
     }
 
-    public Set<Integer> getFriend(Integer id) {
+    public Set<User> getFriend(Integer id) {
+        usersContainsIdAndNotNull(inMemoryUserStorage.getUsers(), id);
         User user = inMemoryUserStorage.getUserById(id);
-        Set<Integer> friend = user.getFriends();
-        return friend;
+        userNotNull(user);
+        Set<User> setOfFriends = new HashSet<>();
+        if (user.getFriends() == null) {
+            return setOfFriends;
+        } else {
+            for (int idFriend : user.getFriends()) {
+                setOfFriends.add(inMemoryUserStorage.getUserById(idFriend));
+            }
+            return setOfFriends;
+        }
     }
-
-
 }

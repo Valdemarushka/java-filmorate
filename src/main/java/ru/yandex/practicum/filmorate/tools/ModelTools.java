@@ -14,14 +14,8 @@ import java.util.HashMap;
 public class ModelTools {
     static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 11, 28);
 
-    //общие методы
-    public static int nextIndex(int userIndex) {
-        return ++userIndex;
-    }
-
     //методы для фильмов
     private final static Logger log = LoggerFactory.getLogger(ModelTools.class);
-
 
     public static void filmsNotNull(HashMap films) {
         if (films == null) {
@@ -30,14 +24,13 @@ public class ModelTools {
         }
     }
 
-    public static void filmsContainsId(HashMap films, Integer id) {
+    public static void filmsContainsIdAndNotNull(HashMap films, Integer id) {
         filmsNotNull(films);
         if (!films.containsKey(id)) {
             log.error("Фильма с таким id нет");
             throw new NotFoundException("Фильма с таким id нет");
         }
     }
-
 
     public static void validateFilm(Film film) {
         filmNotNull(film);
@@ -85,8 +78,6 @@ public class ModelTools {
     }
 
     //методы для юзеров
-
-
     public static void usersNotNull(HashMap users) {
         if (users == null) {
             log.error("users - null");
@@ -94,7 +85,7 @@ public class ModelTools {
         }
     }
 
-    public static void usersContainsId(HashMap users, Integer id) {
+    public static void usersContainsIdAndNotNull(HashMap users, Integer id) {
         usersNotNull(users);
         if (!users.containsKey(id)) {
             log.error("Юзера с таким id нет");
@@ -114,7 +105,7 @@ public class ModelTools {
     public static void userNotNull(User user) {
         if (user == null) {
             log.error("Вместо объекта юзера передан null");
-            throw new ObjectIsNull("Вместо юзера фильма передан null");
+            throw new ObjectIsNull("Вместо юзера передан null");
         }
     }
 
@@ -149,9 +140,7 @@ public class ModelTools {
         }
     }
 
-
     public static void userBirthdayValidator(User user) {
-
         if (user.getBirthday().isAfter(LocalDate.now())) {
             log.error("Неверная дата рождения");
             throw new ValidateException("Неверная дата рождения");

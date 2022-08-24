@@ -21,13 +21,10 @@ public class ExceptionsHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(final IncorrectParameterException e) {
         return new ErrorResponse(
-                String.format("Ошибка с полем \"%s\".", e.getParameter())
-        );
+                String.format("Ошибка с полем \"%s\".", e.getParameter()));
     }
 
-
     //Валидация
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidateExeption(final ValidateException e) {
@@ -35,7 +32,6 @@ public class ExceptionsHandler {
     }
 
     //не найденно
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(final NotFoundException e) {
@@ -53,6 +49,4 @@ public class ExceptionsHandler {
                 e.getMessage()
         );
     }
-
-
 }

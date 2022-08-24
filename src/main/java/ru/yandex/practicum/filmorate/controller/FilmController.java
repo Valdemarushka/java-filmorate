@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
 
 @RestController
 @Slf4j
@@ -45,7 +44,7 @@ public class FilmController {
     }
 
     @GetMapping("films/popular")
-    public Set<Film> getMostPopularFilm(
+    public Collection<Film> getMostPopularFilm(
             @RequestParam(defaultValue = "10", required = false) Integer count
     ) {
         if (count < 0) {
@@ -62,9 +61,5 @@ public class FilmController {
     @PutMapping(value = "/films")
     public Film updateFilm(@RequestBody Film updateFilm) {
         return inMemoryFilmStorage.updateFilm(updateFilm);
-
     }
-
-
 }
-

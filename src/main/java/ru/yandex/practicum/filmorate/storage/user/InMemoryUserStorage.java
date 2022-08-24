@@ -10,7 +10,6 @@ import java.util.List;
 
 import static ru.yandex.practicum.filmorate.tools.ModelTools.*;
 
-
 @Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -18,6 +17,9 @@ public class InMemoryUserStorage implements UserStorage {
     private final HashMap<Integer, User> users = new HashMap<>();
     private Integer userIndex = 0;
 
+    private int nextIndex() {
+        return ++userIndex;
+    }
 
     @Override
     public List<User> getAllUser() {
@@ -30,7 +32,7 @@ public class InMemoryUserStorage implements UserStorage {
         log.debug("Создаем юзера");
         validateUser(user);
         usersNotNull(users);
-        user.setId(nextIndex(userIndex));
+        user.setId(nextIndex());
         users.put(user.getId(), user);
         log.debug("Юзер создан");
         return users.get(user.getId());
@@ -39,7 +41,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User updateUser) {
         validateUser(updateUser);
-        usersContainsId(users, updateUser.getId());
+        usersContainsIdAndNotNull(users, updateUser.getId());
         users.put(updateUser.getId(), updateUser);
         log.debug("Юзер обновлен");
         return users.get(updateUser.getId());
@@ -47,9 +49,15 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUserById(Integer id) {
-        usersContainsId(users, id);
+        usersContainsIdAndNotNull(users, id);
         log.debug("Возвращен юзер с id{}", id);
         return users.get(id);
+    }
+
+    @Override
+    public HashMap<Integer, User> getUsers() {
+        usersNotNull(users);
+        return users;
     }
 
     @Override
@@ -61,7 +69,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void deleteUser(Integer id) {
-        usersContainsId(users, id);
+        usersContainsIdAndNotNull(users, id);
         users.remove(id);
         log.debug("Удален юзер с id{}", id);
     }

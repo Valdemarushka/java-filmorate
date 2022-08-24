@@ -29,7 +29,7 @@ public class UserController {
         return inMemoryUserStorage.getAllUser();
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/users/{id}")
     public User getUserById(@PathVariable("id") Integer id) {
         return inMemoryUserStorage.getUserById(id);
     }
@@ -44,14 +44,14 @@ public class UserController {
         userService.deleteFriend(id, friendId);
     }
 
-    @GetMapping("/user/{id}/friends")
-    public Set<Integer> getFriends(@PathVariable("id") Integer id) {
+    @GetMapping("/users/{id}/friends")
+    public Set<User> getFriends(@PathVariable("id") Integer id) {
         return userService.getFriend(id);
     }
 
-    @GetMapping("/user/{id}/friends/common/{otherId}")
-    public List<Integer> getMutualFriend(@PathVariable("id") Integer id, @PathVariable("otherId") Integer otherId) {
-        return userService.getMutualFriend(id, otherId);
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public Set<User> getMutualFriend(@PathVariable("id") Integer id, @PathVariable("otherId") Integer otherId) {
+        return userService.getСommonFriends(id, otherId);
     }
 
 
