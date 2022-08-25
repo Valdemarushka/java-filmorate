@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,11 +25,9 @@ public class FilmService {
     InMemoryUserStorage inMemoryUserStorage;
 
     @Autowired
-
     public FilmService(InMemoryFilmStorage inMemoryFilmStorage, InMemoryUserStorage inMemoryUserStorage) {
         this.inMemoryFilmStorage = inMemoryFilmStorage;
         this.inMemoryUserStorage = inMemoryUserStorage;
-
     }
 
     public void addLike(Integer idFilm, Integer idLiker) {
@@ -65,4 +64,25 @@ public class FilmService {
                 .limit(count)
                 .collect(Collectors.toList());
     }
+
+    public Film createFilm(Film film) {
+        return inMemoryFilmStorage.createFilm(film);
+    }
+
+    public Film updateFilm(Film updateFilm) {
+        return inMemoryFilmStorage.updateFilm(updateFilm);
+    }
+
+    public ArrayList<Film> getAllFilms() {
+        return inMemoryFilmStorage.getAllFilms();
+    }
+
+    public Film getFilmById(Integer id) {
+        return inMemoryFilmStorage.getFilmById(id);
+    }
+
+    public void deleteAllFilms() {
+        inMemoryFilmStorage.deleteAllFilms();
+    }
+
 }

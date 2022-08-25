@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static ru.yandex.practicum.filmorate.tools.ModelTools.userNotNull;
@@ -86,5 +88,33 @@ public class UserService {
             }
             return setOfFriends;
         }
+    }
+
+    public List<User> getAllUser() {
+        return inMemoryUserStorage.getAllUser();
+    }
+
+    public User createUser(User user) {
+        return inMemoryUserStorage.createUser(user);
+    }
+
+    public User updateUser(User updateUser) {
+        return inMemoryUserStorage.updateUser(updateUser);
+    }
+
+    public User getUserById(Integer id) {
+        return inMemoryUserStorage.getUserById(id);
+    }
+
+    public HashMap<Integer, User> getUsers() {
+        return inMemoryUserStorage.getUsers();
+    }
+
+    public void deleteAllUser() {
+        inMemoryUserStorage.deleteAllUser();
+    }
+
+    public void deleteUser(Integer id) {
+        inMemoryUserStorage.deleteUser(id);
     }
 }

@@ -9,17 +9,17 @@ import java.util.List;
 public interface FilmStorage {
 
     // Хранение, обновление и поиск объектов.
-    public Film createFilm(Film film);
+    Film createFilm(Film film);
 
-    public Film updateFilm(Film updateFilm);
+    Film updateFilm(Film updateFilm);
 
-    public List<Film> getAllFilms();
+    List<Film> getAllFilms();
 
-    public Film getFilmById(Integer id);
+    Film getFilmById(Integer id);
 
-    public HashMap<Integer, Film> getFilms();
+    HashMap<Integer, Film> getFilms();
 
-    public void deleteAllFilms();
+    void deleteAllFilms();
 
-    public void deleteFilm(Integer id);
+    void deleteFilm(Integer id);
 }

@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,21 +15,21 @@ public class FilmController {
     private final HashMap<Integer, Film> films = new HashMap<>();
     private Integer filmIndex = 0;
     private final FilmService filmService;
-    private final InMemoryFilmStorage inMemoryFilmStorage;
 
-    public FilmController(FilmService filmService, InMemoryFilmStorage inMemoryFilmStorage) {
+
+    public FilmController(FilmService filmService) {
         this.filmService = filmService;
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
+
     }
 
     @GetMapping("/films")
     public Collection<Film> findAllFilms() {
-        return inMemoryFilmStorage.getAllFilms();
+        return filmService.getAllFilms();
     }
 
     @GetMapping("/films/{id}")
     public Film getFilmById(@PathVariable("id") Integer id) {
-        return inMemoryFilmStorage.getFilmById(id);
+        return filmService.getFilmById(id);
     }
 
     @PutMapping("/films/{id}/like/{userId}")
@@ -55,11 +54,11 @@ public class FilmController {
 
     @PostMapping(value = "/films")
     public Film createFilm(@RequestBody Film film) {
-        return inMemoryFilmStorage.createFilm(film);
+        return filmService.createFilm(film);
     }
 
     @PutMapping(value = "/films")
     public Film updateFilm(@RequestBody Film updateFilm) {
-        return inMemoryFilmStorage.updateFilm(updateFilm);
+        return filmService.updateFilm(updateFilm);
     }
 }

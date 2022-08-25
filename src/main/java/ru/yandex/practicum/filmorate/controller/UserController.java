@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,23 +14,21 @@ import java.util.Set;
 public class UserController {
     private final HashMap<Integer, User> users = new HashMap<>();
     private Integer userIndex = 0;
-    InMemoryUserStorage inMemoryUserStorage;
     UserService userService;
 
 
-    public UserController(InMemoryUserStorage inMemoryUserStorage, UserService userService) {
-        this.inMemoryUserStorage = inMemoryUserStorage;
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping("/users")
     public List<User> findAllUser() {
-        return inMemoryUserStorage.getAllUser();
+        return userService.getAllUser();
     }
 
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable("id") Integer id) {
-        return inMemoryUserStorage.getUserById(id);
+        return userService.getUserById(id);
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
@@ -57,12 +54,12 @@ public class UserController {
 
     @PostMapping(value = "/users")
     public User createUser(@RequestBody User user) {
-        return inMemoryUserStorage.createUser(user);
+        return userService.createUser(user);
     }
 
     @PutMapping(value = "/users")
     public User updateUser(@RequestBody User updateUser) {
-        return inMemoryUserStorage.updateUser(updateUser);
+        return userService.updateUser(updateUser);
     }
 
 

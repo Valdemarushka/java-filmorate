@@ -44,7 +44,6 @@ public class ExceptionsHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleObjectIsNull(final ObjectIsNull e) {
-        log.error("Исключение NULL");
         return new ErrorResponse(
                 e.getMessage()
         );
