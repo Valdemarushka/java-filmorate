@@ -1,7 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.exception.ObjectIsNull;
+import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ class UserControllerTest {
                 .login("login")
                 .birthday(LocalDate.of(1988, 11, 11))
                 .build();
-        assertThrows(UserEmailWithoutSymbol.class, () -> validateUser(user));
+        assertThrows(ValidateException.class, () -> validateUser(user));
     }
 
     @Test
@@ -38,7 +39,7 @@ class UserControllerTest {
                 .login("login")
                 .birthday(LocalDate.of(1988, 11, 11))
                 .build();
-        assertThrows(UserInvalidEmail.class, () -> validateUser(user));
+        assertThrows(ValidateException.class, () -> validateUser(user));
     }
 
     @Test
@@ -50,7 +51,7 @@ class UserControllerTest {
                 .login("")
                 .birthday(LocalDate.of(1988, 11, 11))
                 .build();
-        assertThrows(UserInvalidLogin.class, () -> validateUser(user));
+        assertThrows(ValidateException.class, () -> validateUser(user));
     }
 
     @Test
@@ -62,7 +63,7 @@ class UserControllerTest {
                 .login("dsf sadf")
                 .birthday(LocalDate.of(1988, 11, 11))
                 .build();
-        assertThrows(UserInvalidLogin.class, () -> validateUser(user));
+        assertThrows(ValidateException.class, () -> validateUser(user));
     }
 
     @Test
@@ -87,7 +88,7 @@ class UserControllerTest {
                 .login("Login")
                 .birthday(LocalDate.of(3000, 11, 11))
                 .build();
-        assertThrows(UserInvalidBirthday.class, () -> validateUser(user));
+        assertThrows(ValidateException.class, () -> validateUser(user));
     }
 
 }
