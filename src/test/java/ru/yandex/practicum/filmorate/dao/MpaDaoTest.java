@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate;
+package ru.yandex.practicum.filmorate.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -7,15 +7,22 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class FilmorateApplicationTests {
+class MpaDaoTest {
+    private final MpaDao mpaDao;
 
     @Test
-    void contextLoads() {
+    void getMpaById() {
+        assertTrue(mpaDao.getMpaById(1).getName().equals("G"));
     }
 
+    @Test
+    void getAllMpa() {
+        assertTrue(mpaDao.getAllMpa().size() == 5);
+    }
 }
