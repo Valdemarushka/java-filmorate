@@ -34,13 +34,14 @@ public class UserDbStorage implements UserStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+
     @Override
     public User addUser(User user) {
+        log.debug("Добавляется юзер");
         validateUser(user);
         jdbcTemplate.update(sqlCreateUser, user.getEmail(), user.getName(), user.getLogin(), user.getBirthday());
         SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlGetUserId, user.getEmail());
         if (userRows.next()) {
-            log.debug("UserDbStorage");
             return new User(userRows.getInt("id_user"), user.getEmail(), user.getName(), user.getLogin(),
                     user.getBirthday());
         }
@@ -49,6 +50,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User updateUser(User updateUser) {
+        log.debug("Обновляется юзер");
         validateUser(updateUser);
         userIdValidator(updateUser);
         jdbcTemplate.update(sqlUpdateUser, updateUser.getEmail(), updateUser.getName(), updateUser.getLogin(),
@@ -58,11 +60,13 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAllUser() {
+        log.debug("Выдается список юзеров");
         List<User> userList = jdbcTemplate.query(sqlGetAllUser, (rs, rowNum) -> makeUser(rs));
         return userList;
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
+        log.debug("создается юзер");
         Integer userId = rs.getInt("id_user");
         String email = rs.getString("email");
         String name = rs.getString("name");
@@ -87,12 +91,14 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getUserById(Integer userId) {
+        log.debug("Выдается юзер с id{}", userId);
         idValidator(userId);
         return jdbcTemplate.query(sqlGetUserById, (rs, rowNum) -> makeUser(rs), userId).get(0);
     }
 
     @Override
     public void deleteAllUser() {
+        log.debug("Удаляются все юзеры");
         List<User> userList = jdbcTemplate.query(sqlGetAllUser, (rs, rowNum) -> makeUser(rs));
         for (User user : userList) {
             jdbcTemplate.update(sqlDeleteUser, user.getId());
@@ -101,6 +107,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void deleteUser(Integer id) {
+        log.debug("Удаляется юзер с id{}", id);
         jdbcTemplate.update(sqlDeleteUser, id);
     }
 

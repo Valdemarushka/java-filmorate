@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -11,10 +10,8 @@ import ru.yandex.practicum.filmorate.exception.ObjectIsNull;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
-@Slf4j
 @RestControllerAdvice
 public class ExceptionsHandler {
-
 
     //Параметры
     @ExceptionHandler
@@ -31,7 +28,7 @@ public class ExceptionsHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    //не найденно
+    //не найдено
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(final NotFoundException e) {

@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
@@ -11,7 +10,6 @@ import java.util.Collection;
 import java.util.HashMap;
 
 @RestController
-@Slf4j
 public class FilmController {
     private final HashMap<Integer, Film> films = new HashMap<>();
     private Integer filmIndex = 0;
@@ -55,7 +53,6 @@ public class FilmController {
 
     @PostMapping(value = "/films")
     public Film createFilm(@RequestBody Film film) {
-        System.out.println(film);
         return filmService.addFilm(film);
     }
 

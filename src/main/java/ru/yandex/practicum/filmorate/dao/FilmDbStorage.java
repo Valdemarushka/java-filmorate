@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -18,13 +19,13 @@ import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.requests.FilmDbRequest.*;
 
+@Slf4j
 @Repository("filmDbStorage")
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final LikesDao likesDao;
     private final MpaDao mpaDao;
     private final GenreDao genreDao;
-
 
     @Autowired
     public FilmDbStorage(JdbcTemplate jdbcTemplate, LikesDao likesDao, MpaDao mpaDao, GenreDao genreDao) {
@@ -36,6 +37,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
+        log.debug("Добавляется фильм");
         jdbcTemplate.update(sqlAddFilm, film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getMpa().getId());
 
@@ -68,6 +70,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
+        log.debug("Обновляется фильм");
         int idFilm = film.getId();
 
         jdbcTemplate.update(sqlDeleteAllGenresInFilm, idFilm);
@@ -94,6 +97,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {
+        log.debug("Создается фильм");
         Integer idFilm = rs.getInt("id_film");
         String name = rs.getString("name");
         String description = rs.getString("description");
@@ -126,11 +130,13 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilms() {
+        log.debug("Выводятся все фильмы");
         return jdbcTemplate.query(sqlGetAllFilms, (rs, rowNum) -> makeFilm(rs));
     }
 
     @Override
     public Film getFilmById(Integer id) {
+        log.debug("Выводятся фильм с id{}", id);
         return jdbcTemplate.query(sqlGetFilmById, (rs, rowNum) -> makeFilm(rs), id).get(0);
     }
 
@@ -141,6 +147,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void deleteAllFilms() {
+        log.debug("Удаляются все фильмы");
         List<Film> filmList = jdbcTemplate.query(sqlGetAllFilms, (rs, rowNum) -> makeFilm(rs));
         for (Film film : filmList) {
             jdbcTemplate.update(FilmDbRequest.sqlDeleteAllGenresInFilm, film.getId());
@@ -151,6 +158,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void deleteFilm(Integer id) {
+        log.debug("Удаляется фильм с id {}", id);
         jdbcTemplate.update(sqlDeleteAllGenresInFilm, id);
         jdbcTemplate.update(FilmDbRequest.sqlDeleteFilm, id);
     }
@@ -171,6 +179,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getPopular(Integer count) {
+        log.debug("Выводится {} самых популярных фильмов", count);
         return getAllFilms()
                 .stream()
                 .sorted((f1, f2) -> Integer.compare(getLikes(f2.getId()).size(), getLikes(f1.getId()).size()))

@@ -9,7 +9,6 @@ import java.util.Collection;
 
 import static ru.yandex.practicum.filmorate.tools.ModelTools.idValidator;
 
-
 @Service
 public class RatingService {
     private final MpaDao mpaDao;

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -12,6 +13,7 @@ import java.util.List;
 import static ru.yandex.practicum.filmorate.requests.LikesDbRequest.*;
 import static ru.yandex.practicum.filmorate.tools.ModelTools.idValidator;
 
+@Slf4j
 @Component
 public class LikesDao {
     private final JdbcTemplate jdbcTemplate;
@@ -23,11 +25,13 @@ public class LikesDao {
 
     public void addLike(Integer filmId, Integer userId) {
         idValidator(userId);
+        log.debug("Добавлен лайк к фильму {} от пользователя {}", filmId, userId);
         jdbcTemplate.update(sqlAddLike, filmId, userId);
     }
 
     public void removeLike(Integer filmId, Integer userId) {
         idValidator(userId);
+        log.debug("Убран лайк с фильма {} от пользователя {}", filmId, userId);
         jdbcTemplate.update(sqlRemoveLike, filmId, userId);
     }
 
@@ -38,6 +42,7 @@ public class LikesDao {
             Integer idLiker = likerRows.getInt("id_user");
             likerList.add(idLiker);
         }
+        log.debug("выведен список всех лайков в фильме {}", filmId);
         return likerList;
     }
 }

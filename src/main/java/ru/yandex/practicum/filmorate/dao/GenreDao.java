@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -16,6 +17,7 @@ import static ru.yandex.practicum.filmorate.requests.GenreDbRequest.sqlGetGenreB
 import static ru.yandex.practicum.filmorate.tools.ModelTools.idValidator;
 import static ru.yandex.practicum.filmorate.tools.ModelTools.validateFilm;
 
+@Slf4j
 @Repository
 public class GenreDao {
     private final JdbcTemplate jdbcTemplate;
@@ -26,6 +28,7 @@ public class GenreDao {
     }
 
     public Genre getGenreById(Integer idGenre) {
+        log.debug("Выводится жанр с id {}", idGenre);
         idValidator(idGenre);
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sqlGetGenreById, idGenre);
         if (genreRows.next()) {
@@ -37,12 +40,14 @@ public class GenreDao {
     }
 
     public Collection<Genre> getAllGenres() {
+        log.debug("Выводятся все жанры");
         return jdbcTemplate.query(sqlGetAllGenres, (rs, rowNum) -> new Genre(
                 rs.getInt("id_genre"),
                 rs.getString("genre")));
     }
 
     public void updateGenreInFilm(Film film) {
+        log.debug("Обновляются жанры в фильме");
         validateFilm(film);
         jdbcTemplate.update(sqlDeleteAllGenresInFilm, film.getId());
         if (!film.getGenres().isEmpty()) {

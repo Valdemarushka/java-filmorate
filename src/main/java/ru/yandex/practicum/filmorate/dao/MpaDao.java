@@ -25,6 +25,7 @@ public class MpaDao {
     public Mpa getMpaById(Integer idMpa) {
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlGetMpaById, idMpa);
         if (rowSet.next()) {
+            log.debug("Выводится MPA с id{}", idMpa);
             return new Mpa(
                     rowSet.getInt("id_mpa"),
                     rowSet.getString("mpa"));
@@ -33,6 +34,7 @@ public class MpaDao {
     }
 
     public Collection<Mpa> getAllMpa() {
+        log.debug("Выводятся все MPA");
         return jdbcTemplate.query(sqlGetAllMpa, (rs, rowNum) -> new Mpa(
                 rs.getInt("id_mpa"),
                 rs.getString("mpa")
