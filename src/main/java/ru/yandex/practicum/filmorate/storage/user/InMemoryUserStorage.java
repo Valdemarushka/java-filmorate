@@ -4,14 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static ru.yandex.practicum.filmorate.tools.ModelTools.*;
 
 @Slf4j
-@Component
+@Component("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
 
     private final HashMap<Integer, User> users = new HashMap<>();
@@ -28,7 +26,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User createUser(User user) {
+    public User addUser(User user) {
         log.debug("Создаем юзера");
         validateUser(user);
         usersNotNull(users);
@@ -73,5 +71,76 @@ public class InMemoryUserStorage implements UserStorage {
         users.remove(id);
         log.debug("Удален юзер с id{}", id);
     }
-}
 
+    @Override
+    public Set<User> getСommonFriends(Integer idUser1, Integer idUser2) {
+        idValidator(idUser1);
+        idValidator(idUser2);
+        User user = getUserById(idUser1);
+        userNotNull(user);
+        User user2 = getUserById(idUser2);
+        userNotNull(user2);
+        Set<User> сommonFriends = new HashSet<>();
+        if (user.getFriends() == null || user2.getFriends() == null) {
+            return сommonFriends;
+        }
+        for (Integer IdFriendsUser1 : user.getFriends()) {
+            if (user2.getFriends().contains(IdFriendsUser1)) {
+                сommonFriends.add(getUserById(IdFriendsUser1));
+            }
+        }
+        return сommonFriends;
+    }
+
+    @Override
+    public Set<User> getUserFriends(Integer id) {
+        idValidator(id);
+        User user = getUserById(id);
+        userNotNull(user);
+        Set<User> setOfFriends = new HashSet<>();
+        if (user.getFriends() == null) {
+            return setOfFriends;
+        } else {
+            for (int idFriend : user.getFriends()) {
+                setOfFriends.add(getUserById(idFriend));
+            }
+            return setOfFriends;
+        }
+    }
+
+    @Override
+    public void addToFriends(Integer userId, Integer friendId) {
+        idValidator(userId);
+        idValidator(friendId);
+        addFriendOneDirection(userId, friendId);
+        addFriendOneDirection(friendId, userId);
+    }
+
+    @Override
+    public void removeFromFriends(Integer userId, Integer friendId) {
+        idValidator(userId);
+        idValidator(friendId);
+        removeFriendOneDirection(userId, friendId);
+        removeFriendOneDirection(friendId, userId);
+    }
+
+    public void addFriendOneDirection(Integer idUser1, Integer idUser2) {
+        User user = getUserById(idUser1);
+        userNotNull(user);
+        Set<Integer> friendsOfUser = user.getFriends();
+        friendsOfUser.add(idUser2);
+        user.setFriends(friendsOfUser);
+        updateUser(user);
+    }
+
+    public void removeFriendOneDirection(Integer idUser1, Integer idUser2) {
+        User user = getUserById(idUser1);
+        userNotNull(user);
+        Set<Integer> friendsOfUser = user.getFriends();
+        if (friendsOfUser.contains(idUser2)) {
+            friendsOfUser.remove(idUser2);
+            user.setFriends(friendsOfUser);
+            updateUser(user);
+        }
+    }
+}

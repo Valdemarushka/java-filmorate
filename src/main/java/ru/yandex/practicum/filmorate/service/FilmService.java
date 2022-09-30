@@ -1,88 +1,71 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.LikesDao;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static ru.yandex.practicum.filmorate.tools.ModelTools.filmNotNull;
-import static ru.yandex.practicum.filmorate.tools.ModelTools.usersContainsIdAndNotNull;
+import static ru.yandex.practicum.filmorate.tools.ModelTools.*;
 
-@Slf4j
 @Service
 public class FilmService {
 
     private final Integer AMOUNT_POPULAR_FILMS = 10;
-    InMemoryFilmStorage inMemoryFilmStorage;
-    InMemoryUserStorage inMemoryUserStorage;
+    private final FilmStorage filmStorage;
+    private final LikesDao likesDao;
 
     @Autowired
-    public FilmService(InMemoryFilmStorage inMemoryFilmStorage, InMemoryUserStorage inMemoryUserStorage) {
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
-        this.inMemoryUserStorage = inMemoryUserStorage;
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage, LikesDao likesDao) {
+        this.filmStorage = filmStorage;
+        this.likesDao = likesDao;
     }
 
     public void addLike(Integer idFilm, Integer idLiker) {
-        usersContainsIdAndNotNull(inMemoryUserStorage.getUsers(), idLiker);
-        Film film = inMemoryFilmStorage.getFilmById(idFilm);
-        filmNotNull(film);
-        Set<Integer> likes = new HashSet<>();
-        if (film.getLikes() == null) {
-            likes.add(idLiker);
-        } else {
-            likes = film.getLikes();
-            likes.add(idLiker);
-        }
-        film.setLikes(likes);
-        inMemoryFilmStorage.updateFilm(film);
+        likesDao.addLike(idFilm, idLiker);
     }
 
     public void deleteLike(Integer idFilm, Integer idLiker) {
-        usersContainsIdAndNotNull(inMemoryUserStorage.getUsers(), idLiker);
-        Film film = inMemoryFilmStorage.getFilmById(idFilm);
+        idValidator(idLiker);
+        idValidator(idFilm);
+        Film film = filmStorage.getFilmById(idFilm);
         filmNotNull(film);
         Set<Integer> likes = film.getLikes();
         likes.remove(idLiker);
         film.setLikes(likes);
-        inMemoryFilmStorage.updateFilm(film);
+        filmStorage.updateFilm(film);
     }
 
     public Collection<Film> getMostPopularFilm(Integer count) {
-        return inMemoryFilmStorage
-                .getFilms()
-                .values()
-                .stream()
-                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
-                .limit(count)
-                .collect(Collectors.toList());
+        return filmStorage.getPopular(count);
     }
 
-    public Film createFilm(Film film) {
-        return inMemoryFilmStorage.createFilm(film);
+    public Film addFilm(Film film) {
+        validateFilm(film);
+        return filmStorage.addFilm(film);
     }
 
     public Film updateFilm(Film updateFilm) {
-        return inMemoryFilmStorage.updateFilm(updateFilm);
+        filmIdValidator(updateFilm);
+        validateFilm(updateFilm);
+        return filmStorage.updateFilm(updateFilm);
     }
 
-    public ArrayList<Film> getAllFilms() {
-        return inMemoryFilmStorage.getAllFilms();
+    public List<Film> getAllFilms() {
+        return filmStorage.getAllFilms();
     }
 
     public Film getFilmById(Integer id) {
-        return inMemoryFilmStorage.getFilmById(id);
+        idValidator(id);
+        return filmStorage.getFilmById(id);
     }
 
     public void deleteAllFilms() {
-        inMemoryFilmStorage.deleteAllFilms();
+        filmStorage.deleteAllFilms();
     }
-
 }

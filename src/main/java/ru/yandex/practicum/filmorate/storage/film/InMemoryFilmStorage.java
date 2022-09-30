@@ -4,16 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.tools.ModelTools.*;
 
-@Component
+@Component("inMemoryFilmStorage")
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
 
-    //реализация хранения, обновления и поиска объектов.
     private final HashMap<Integer, Film> films = new HashMap<>();
     private Integer filmIndex = 0;
 
@@ -22,7 +21,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film createFilm(Film film) {
+    public Film addFilm(Film film) {
         validateFilm(film);
         filmsNotNull(films);
         film.setId(nextIndex());
@@ -75,5 +74,44 @@ public class InMemoryFilmStorage implements FilmStorage {
         filmsContainsIdAndNotNull(films, id);
         films.remove(id);
         log.debug("Фильм c id{} удален", id);
+    }
+
+    @Override
+    public void addLike(Integer filmId, Integer userId) {
+        idValidator(userId);
+        idValidator(filmId);
+        Film film = getFilmById(filmId);
+        filmNotNull(film);
+        Set<Integer> likes = new HashSet<>();
+        if (film.getLikes() == null) {
+            likes.add(userId);
+        } else {
+            likes = film.getLikes();
+            likes.add(userId);
+        }
+        film.setLikes(likes);
+        updateFilm(film);
+    }
+
+    @Override
+    public void removeLike(Integer filmId, Integer userId) {
+        idValidator(userId);
+        idValidator(filmId);
+        Film film = getFilmById(filmId);
+        filmNotNull(film);
+        Set<Integer> likes = film.getLikes();
+        likes.remove(userId);
+        film.setLikes(likes);
+        updateFilm(film);
+    }
+
+    @Override
+    public Collection<Film> getPopular(Integer count) {
+        return getFilms()
+                .values()
+                .stream()
+                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }

@@ -146,4 +146,25 @@ public class ModelTools {
             throw new ValidateException("Неверная дата рождения");
         }
     }
+
+    public static void userIdValidator(User user) {
+        if (user.getId() <= 0) {
+            log.error("Неверный id");
+            throw new NotFoundException("Неверный id");
+        }
+    }
+
+    public static void filmIdValidator(Film film) {
+        if (film.getId() <= 0) {
+            log.error("Неверный id");
+            throw new NotFoundException("Неверный id");
+        }
+    }
+
+    public static void idValidator(Integer id) {
+        if (id <= 0) {
+            log.error("Неверный id");
+            throw new NotFoundException("Неверный id");
+        }
+    }
 }
